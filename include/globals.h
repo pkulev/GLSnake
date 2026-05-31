@@ -16,6 +16,9 @@ along with GLSnake. If not, see <https://www.gnu.org/licenses/>. */
 #ifndef _S_GLOB
 #define _S_GLOB
 
+// NOTE: Don't redefine main. Fails on windows without it (requires SDL_main
+// instead of main). Must be defined before any SDL include.
+#define SDL_MAIN_HANDLED
 #include <SDL.h>
 #define GL_SILENCE_DEPRECATION
 #include <SDL_opengl.h>
