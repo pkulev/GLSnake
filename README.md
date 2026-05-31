@@ -20,12 +20,16 @@ sudo emerge -av glsnake
 # Build from sources
 
 ## Requirements
+
 - `SDL2`
 - `SDL2_ttf`
-- `SDL2_mixer` (with Vorbis support for .ogg music)
+- `SDL2_mixer` (with Vorbis support for `.ogg` music)
 - Legacy OpenGL 2.1+ (fixed-function pipeline)
+- `pkg-config`
+- [Meson](https://mesonbuild.com/)
 
-## Build
+## Linux / MacOS
+
 ```bash
 $ meson setup build       # Once, add --wipe if needed to remake build dir.
 $ meson compile -C build  # Compile and link.
