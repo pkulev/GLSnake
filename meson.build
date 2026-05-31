@@ -16,6 +16,26 @@ add_project_arguments(
 # Provides 'sources' and 'dependencies' variables.
 subdir('src')
 
+if host_machine.system() == 'windows'
+  vcpkg_root = meson.project_source_root() / 'vcpkg_installed' / 'x64-windows'
+  powershell = find_program('powershell', 'pwsh', required: true)
+  custom_target(
+    'copy-vcpkg-dlls',
+    command: [
+      powershell,
+      '-NoProfile',
+      '-ExecutionPolicy', 'Bypass',
+      '-File', meson.project_source_root() / 'copy-vcpkg-dlls.ps1',
+      '-VcpkgBin', vcpkg_root / 'bin',
+      '-DestDir', meson.current_build_dir(),
+      '-Stamp', '@OUTPUT@',
+    ],
+    output: 'vcpkg-dlls.stamp',
+    build_by_default: true,
+  )
+endif
+
+
 executable(
   'snake',
   sources,
