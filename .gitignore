@@ -1,2 +1,5 @@
 # Meson
 build/
+
+# vcpkg manifest install tree
+vcpkg_installed/
