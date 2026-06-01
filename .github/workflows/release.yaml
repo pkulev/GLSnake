@@ -1,0 +1,68 @@
+name: GLSnake Release
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  windows-installer:
+    name: Windows MSI and ZIP
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve version
+        id: version
+        shell: bash
+        run: |
+          if [[ "${{ github.event_name }}" == "release" ]]; then
+            ver="${{ github.event.release.tag_name }}"
+          else
+            ver="v$(grep -E "^[[:space:]]*version[[:space:]]*:" meson.build | head -1 | sed -E "s/.*'([^']+)'.*/\1/")"
+          fi
+          echo "tag=$ver" >> "$GITHUB_OUTPUT"
+          echo "Version: $ver"
+
+      - name: Install build tools (Scoop)
+        uses: MinoruSekine/setup-scoop@v4.0.2
+        with:
+          apps: meson vcpkg pkg-config ninja
+
+      - name: Install vcpkg dependencies
+        run: vcpkg install --triplet x64-windows
+
+      - name: Setup MSVC
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+
+      - name: Build game
+        run: meson setup build --backend ninja --vsenv -Dbuildtype=release -Dresource_dir=resources/
+        shell: pwsh
+
+      - name: Compile
+        run: meson compile -C build
+
+      - name: Package MSI and ZIP
+        run: ./installer/build-release.ps1 -Version ${{ steps.version.outputs.tag }}
+
+      - name: Upload to GitHub Release
+        if: github.event_name == 'release'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/GLSnake-*-win64.msi
+            dist/GLSnake-*-win64.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload workflow artifacts
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/upload-artifact@v4
+        with:
+          name: glsnake-windows-${{ steps.version.outputs.tag }}
+          path: dist/GLSnake-*-win64.*

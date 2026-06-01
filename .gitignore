@@ -3,3 +3,9 @@ build/
 
 # vcpkg manifest install tree
 vcpkg_installed/
+
+# Release packaging
+dist/
+installer/staging/
+installer/bin/
+installer/obj/

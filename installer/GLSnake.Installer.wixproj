@@ -1,0 +1,23 @@
+<Project Sdk="WixToolset.Sdk/5.0.2">
+  <PropertyGroup>
+    <OutputName>GLSnake</OutputName>
+    <Platform>x64</Platform>
+    <Version Condition="'$(Version)' == ''">1.0.0.0</Version>
+    <StagingDir Condition="'$(StagingDir)' == ''">$(MSBuildThisFileDirectory)staging</StagingDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="WixToolset.Heat" Version="5.0.2" />
+    <PackageReference Include="WixToolset.Util.wixext" Version="5.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <HarvestDirectory Include="$(StagingDir)">
+      <ComponentGroupName>GameFiles</ComponentGroupName>
+      <DirectoryRefId>INSTALLDIR</DirectoryRefId>
+      <SuppressRootDirectory>true</SuppressRootDirectory>
+      <PreprocessorVariable>var.StagingDir</PreprocessorVariable>
+    </HarvestDirectory>
+    <BindPath Include="$(StagingDir)" />
+  </ItemGroup>
+</Project>
