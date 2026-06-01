@@ -1,6 +1,6 @@
 project(
   'GLSnake', 'c',
-  version : '1.0.0',
+  version : '1.0.4',
   default_options: [
     'default_library=static',
     'c_std=c99',
